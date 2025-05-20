@@ -16,7 +16,8 @@ def main():
         cell_size_y=35,
         window=window
         )
-    
+    maze.generate()
+
     window.wait_for_close()
     
 main()
