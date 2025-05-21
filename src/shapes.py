@@ -51,14 +51,14 @@ class Cell():
 
     def _draw_walls(self):
         if self.has_left_wall:
-            Line(Point(self.__x1, self.__y1), Point(self.__x1, self.__y2)).draw(self.window.canvas, "Black")
-        else:
-            Line(Point(self.__x1, self.__y1), Point(self.__x1, self.__y2)).draw(self.window.canvas, "White")
-
-        if self.has_right_wall:
             Line(Point(self.__x2, self.__y1), Point(self.__x2, self.__y2)).draw(self.window.canvas, "Black")
         else:
             Line(Point(self.__x2, self.__y1), Point(self.__x2, self.__y2)).draw(self.window.canvas, "White")
+
+        if self.has_right_wall:
+            Line(Point(self.__x1, self.__y1), Point(self.__x1, self.__y2)).draw(self.window.canvas, "Black")
+        else:
+            Line(Point(self.__x1, self.__y1), Point(self.__x1, self.__y2)).draw(self.window.canvas, "White")
 
         if self.has_top_wall:
             Line(Point(self.__x1, self.__y2), Point(self.__x2, self.__y2)).draw(self.window.canvas, "Black")

@@ -5,7 +5,7 @@ from tkinter import Tk, BOTH, Canvas
 class Window():
     def __init__(self, width, heigth, title):
         self.__root = Tk()
-        self.__root.title = title
+        self.__root.title(title)
         self.canvas = Canvas(background="White", width=width, height=heigth)
         self.canvas.pack()
         self.running = False
