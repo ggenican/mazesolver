@@ -17,8 +17,8 @@ def main():
         window=window
         )
     maze.generate()
+    maze.solve()
 
-    maze._Maze__break_walls_r(0, 0)
     window.wait_for_close()
     
 main()

@@ -30,10 +30,16 @@ class Maze():
             seed = random.seed(seed)
                 
 
-    def generate(self):
+    def generate(self, test=None):
         self.__create_cells()
-        self.__draw_cell()
-        self.__break_entrance_and_exit()
+        if self.window:
+            self.__draw_cell()
+            self.__break_entrance_and_exit()
+        
+        if test == "CELL_WALLS":
+            return
+        self.__break_walls_r(0,0)
+        self.__reset_visited()
         
     def __create_cells(self):         
         for row in range(self.num_rows):
@@ -41,10 +47,7 @@ class Maze():
             for column in range(self.num_cols):
                 self.__cells[row].append(Cell(self.window))
     
-    def __draw_cell(self):
-        if not self.window:
-            return
-        
+    def __draw_cell(self):        
         x = self.x1
         y = self.y1
         for row in range(len(self.__cells)):
@@ -95,27 +98,88 @@ class Maze():
                 match next_vertex_indexes[2]:
                     case "LEFT":
                         vertex.has_left_wall = False
-                        vertex.redraw()
                         next_vertex.has_right_wall = False
-                        next_vertex.redraw()
                     case "RIGHT":
                         vertex.has_right_wall = False
-                        vertex.redraw()
                         next_vertex.has_left_wall = False
-                        next_vertex.redraw()
                     case "TOP":
                         vertex.has_top_wall = False
-                        vertex.redraw()
                         next_vertex.has_bottom_wall = False
-                        next_vertex.redraw()
                     case "BOTTOM":
                         vertex.has_bottom_wall = False
-                        vertex.redraw()
                         next_vertex.has_top_wall = False
-                        next_vertex.redraw()
-                self._animate()
+                
+                if self.window:
+                    vertex.redraw()
+                    next_vertex.redraw()
+                    self._animate()
                 self.__break_walls_r(next_vertex_indexes[0], next_vertex_indexes[1])
-        return        
+        return       
+
+    def __reset_visited(self):
+        for row in range(len(self.__cells)):
+            for column in range(len(self.__cells[row])):
+                self.__cells[row][column].visited = False
+
+    def solve(self):
+        row = 0
+        column = 0
+        self.__solve_r(row, column)
+
+    def __solve_r(self, row, column):
+        cells = self._Maze__cells
+        vertex = cells[row][column]
+        vertex.visited = True
+        possible_directions = []
+
+        if row == self.num_rows and column == self.num_cols:
+                print("Maze solved!")
+                return True
+        
+        left_way = False
+        right_way = False
+        top_way = False
+        bottom_way = False
+        
+        if vertex.has_left_wall == False and cells[row][column - 1].has_right_wall == False:
+            left_way = True
+        if vertex.has_right_wall == False and cells[row][column + 1].has_left_wall == False:
+            right_way = True
+        if vertex.has_top_wall == False and cells[row - 1][column].has_bottom_wall == False:
+            top_way = True
+        if vertex.has_bottom_wall == False and cells[row + 1][column].has_top_wall == False:
+            bottom_way = True
+
+        #Checking left side
+        if column != 0 and left_way and cells[row][column - 1].visited == False:
+            possible_directions.append((row, column - 1, "LEFT"))
+
+        #Checking right side
+        if column != self.num_cols - 1 and right_way and cells[row][column + 1].visited == False:
+            possible_directions.append((row, column + 1, "RIGHT"))
+
+        #Checking top side
+        if row != 0 and top_way and cells[row - 1][column].visited == False:
+            possible_directions.append((row - 1, column, "TOP"))
+
+        #Checking bottom side
+        if row != self.num_rows - 1 and bottom_way and cells[row + 1][column].visited == False:
+            possible_directions.append((row + 1, column, "BOTTOM"))
+
+        print(possible_directions)
+        while possible_directions:
+            next_vertex_indexes = random.choice(possible_directions)
+            
+            next_vertex = cells[next_vertex_indexes[0]][next_vertex_indexes[1]]
+            possible_directions.remove(next_vertex_indexes)
+
+            print(next_vertex.visited)
+            if next_vertex.visited == False:
+                if self.window:
+                    vertex.draw_move(next_vertex)
+                    self._animate()
+                self.__solve_r(next_vertex_indexes[0], next_vertex_indexes[1])
+            
 
     def _animate(self):
         self.window.redraw()
