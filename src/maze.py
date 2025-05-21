@@ -132,9 +132,9 @@ class Maze():
         vertex.visited = True
         possible_directions = []
 
-        if row == self.num_rows and column == self.num_cols:
-                print("Maze solved!")
-                return True
+        if row == self.num_rows - 1 and column == self.num_cols - 1:
+            print("Maze solved!")
+            return True
         
         left_way = False
         right_way = False
@@ -166,21 +166,21 @@ class Maze():
         if row != self.num_rows - 1 and bottom_way and cells[row + 1][column].visited == False:
             possible_directions.append((row + 1, column, "BOTTOM"))
 
-        print(possible_directions)
         while possible_directions:
             next_vertex_indexes = random.choice(possible_directions)
             
             next_vertex = cells[next_vertex_indexes[0]][next_vertex_indexes[1]]
             possible_directions.remove(next_vertex_indexes)
 
-            print(next_vertex.visited)
             if next_vertex.visited == False:
                 if self.window:
                     vertex.draw_move(next_vertex)
                     self._animate()
-                self.__solve_r(next_vertex_indexes[0], next_vertex_indexes[1])
-            
+                if self.__solve_r(next_vertex_indexes[0], next_vertex_indexes[1]):
+                    return True
 
+            vertex.draw_move(next_vertex, True)    
+        
     def _animate(self):
         self.window.redraw()
         time.sleep(0.04)
